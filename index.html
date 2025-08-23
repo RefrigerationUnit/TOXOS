@@ -10,7 +10,7 @@
 
     body {
       color: white;
-      background: #000; /* helps if the video can’t autoplay */
+      background: #000;
       overflow-x: hidden;
       min-height: 100vh;
       scroll-behavior: smooth;
@@ -22,20 +22,26 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      z-index: 0; /* was -1; some mobiles won’t paint it behind the page */
+      z-index: 0;
       overflow: hidden;
     }
 
     #youtube-background {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 100vw;          /* 16:9 cover trick */
-      height: 56.25vw;       /* 9/16 = 0.5625 */
-      min-height: 100vh;
-      min-width: 177.78vh;   /* 16/9 * 100 */
-      transform: translate(-50%, -50%);
-      pointer-events: none;  /* don’t capture taps */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform: none; /* Remove the centering transform */
+    }
+
+    /* Crop the top of the video by adjusting the iframe position */
+    #youtube-background iframe {
+      position: absolute;
+      top: -60px; /* Adjust this value to crop more or less from the top */
+      left: 0;
+      width: 100%;
+      height: calc(100% + 120px); /* Compensate for the top crop */
     }
 
     .video-overlay {
@@ -68,7 +74,7 @@
       position: fixed;
       width: 100%;
       top: 0;
-      z-index: 3; /* on top of overlay */
+      z-index: 3;
       background: transparent;
     }
 
@@ -169,6 +175,12 @@
       .manifesto { padding: 2rem; }
       .menu { width: 250px; }
       header { padding: 1.2rem; }
+      
+      /* Adjust crop for mobile */
+      #youtube-background iframe {
+        top: -30px;
+        height: calc(100% + 60px);
+      }
     }
 
     @media (max-width: 480px) {
@@ -176,6 +188,12 @@
       header { padding: 1rem; }
       .logo { font-size: 1.7rem; }
       .manifesto h2 { font-size: 2rem; }
+      
+      /* Further adjust crop for small screens */
+      #youtube-background iframe {
+        top: -20px;
+        height: calc(100% + 40px);
+      }
     }
   </style>
 </head>
@@ -247,7 +265,11 @@
           playlist: 'KYrs7bpXUI4', // required for loop
           modestbranding: 1,
           playsinline: 1,
-          origin: window.location.origin
+          origin: window.location.origin,
+          // Additional parameters to hide UI elements
+          iv_load_policy: 3, // Hide annotations
+          showinfo: 0, // Hide video title and uploader
+          fs: 0 // Hide fullscreen button
         },
         events: {
           'onReady': onPlayerReady,
