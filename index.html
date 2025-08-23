@@ -16,28 +16,40 @@
         body {
             color: white;
             overflow-x: hidden;
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-behavior: smooth;
         }
         
-        #video-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            z-index: -1;
-            object-fit: cover;
-        }
-        
-        .overlay {
+        #video-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
             z-index: -1;
+            overflow: hidden;
+        }
+        
+        #video-background {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
+        
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
         }
         
         .content {
@@ -66,7 +78,7 @@
         
         .logo {
             font-size: 2.5rem;
-            font-weight: bold;
+            font-weight: 900;
             font-style: italic;
             color: #00ff8c;
             text-shadow: 0 0 10px rgba(0, 255, 140, 0.5);
@@ -78,6 +90,7 @@
             cursor: pointer;
             color: #00ff8c;
             transition: transform 0.3s ease;
+            z-index: 101;
         }
         
         .hamburger:hover {
@@ -196,6 +209,39 @@
             font-size: 1.1rem;
         }
         
+        .video-instructions {
+            background: rgba(0, 20, 10, 0.9);
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        
+        .video-instructions h2 {
+            font-style: italic;
+            color: #00ff8c;
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #00ff8c;
+            color: #003318;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #00cc6f;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 140, 0.3);
+        }
+        
         .scroll-down {
             position: absolute;
             bottom: 2rem;
@@ -253,11 +299,14 @@
 </head>
 <body>
     <!-- Video Background -->
-    <video id="video-background" autoplay muted loop>
-        <source src="https://player.vimeo.com/external/370331493.sd.mp4?s=b76c3f37c7ddfdb3be942697a6d6d3aefa6e6d5a&profile_id=139&oauth2_token_id=57447761" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-    <div class="overlay"></div>
+    <div id="video-container">
+        <div class="video-overlay"></div>
+        <video id="video-background" autoplay muted loop>
+            <!-- Replace this with your hosted video URL -->
+            <source src="https://player.vimeo.com/external/370331493.sd.mp4?s=b76c3f37c7ddfdb3be942697a6d6d3aefa6e6d5a&profile_id=139&oauth2_token_id=57447761" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
     
     <!-- Header with Hamburger Menu -->
     <header>
@@ -306,6 +355,21 @@
             
             <div class="scroll-down">
                 <i class="fas fa-chevron-down"></i>
+            </div>
+        </section>
+        
+        <!-- Video Instructions Section -->
+        <section class="video-instructions">
+            <h2>Using Your Own Video</h2>
+            <p>To use your own video background, follow these steps:</p>
+            <ol style="text-align: left; display: inline-block; margin: 1rem 0;">
+                <li>Compress your video using HandBrake or similar tool</li>
+                <li>Upload to YouTube or Vimeo</li>
+                <li>Get the embed URL and replace the current video source</li>
+            </ol>
+            <div>
+                <a href="https://handbrake.fr/" class="btn" target="_blank">Download HandBrake</a>
+                <a href="https://www.youtube.com/upload" class="btn" target="_blank">Upload to YouTube</a>
             </div>
         </section>
         
