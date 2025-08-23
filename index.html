@@ -31,16 +31,15 @@
             overflow: hidden;
         }
         
-        #video-background {
+        #youtube-background {
             position: absolute;
             top: 50%;
             left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
+            width: 100vw;
+            height: 56.25vw; /* 100/56.25 = 16/9 ratio */
+            min-height: 100vh;
+            min-width: 177.77vh; /* 16/9 ratio */
             transform: translate(-50%, -50%);
-            object-fit: cover;
         }
         
         .video-overlay {
@@ -194,24 +193,6 @@
             text-align: justify;
         }
         
-        .btn {
-            display: inline-block;
-            background: #00ff8c;
-            color: #003318;
-            padding: 0.8rem 1.5rem;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            margin: 0.5rem;
-            transition: all 0.3s ease;
-        }
-        
-        .btn:hover {
-            background: #00cc6f;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 255, 140, 0.3);
-        }
-        
         .scroll-down {
             position: absolute;
             bottom: 2rem;
@@ -272,14 +253,10 @@
     </style>
 </head>
 <body>
-    <!-- Video Background -->
+    <!-- YouTube Video Background -->
     <div id="video-container">
         <div class="video-overlay"></div>
-        <video id="video-background" autoplay muted loop>
-            <!-- Using a placeholder video that fits GitHub's size limits -->
-            <source src="https://assets.codepen.io/3364143/sample.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+        <div id="youtube-background"></div>
     </div>
     
     <!-- Header with Hamburger Menu -->
@@ -324,7 +301,52 @@
         </section>
     </div>
 
+    <!-- YouTube API -->
     <script>
+        // Load YouTube IFrame API
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        
+        // Create YouTube player
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-background', {
+                height: '100%',
+                width: '100%',
+                videoId: 'KYrs7bpXUI4', // Your YouTube video ID
+                playerVars: {
+                    'autoplay': 1,
+                    'controls': 0,
+                    'showinfo': 0,
+                    'rel': 0,
+                    'loop': 1,
+                    'playlist': 'KYrs7bpXUI4', // Same as videoId for loop to work
+                    'mute': 1,
+                    'enablejsapi': 1,
+                    'modestbranding': 1,
+                    'playsinline': 1
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+        
+        function onPlayerReady(event) {
+            event.target.playVideo();
+            // Set volume to 0 (mute)
+            event.target.setVolume(0);
+        }
+        
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.ENDED) {
+                player.playVideo();
+            }
+        }
+        
         // Toggle menu
         const hamburger = document.getElementById('hamburger');
         const closeMenu = document.getElementById('close-menu');
@@ -354,26 +376,6 @@
             } else {
                 header.classList.remove('scrolled');
             }
-        });
-        
-        // Fallback video source in case the first one doesn't work
-        const video = document.getElementById('video-background');
-        video.addEventListener('error', function() {
-            console.log('Error loading video, switching to fallback source');
-            this.src = 'https://assets.codepen.io/3364143/sample.mp4';
-        });
-        
-        // Video loading optimization
-        window.addEventListener('load', function() {
-            // Preload the video
-            video.load();
-            
-            // Play the video with sound muted
-            video.play().then(() => {
-                console.log('Video playing successfully');
-            }).catch(error => {
-                console.log('Video play failed:', error);
-            });
         });
     </script>
 </body>
