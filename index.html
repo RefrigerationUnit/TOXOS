@@ -1,336 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toxos - GSAPP Organization</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
-        
-        body {
-            color: white;
-            overflow-x: hidden;
-            height: 100vh;
-            overflow-y: scroll;
-            scroll-behavior: smooth;
-        }
-        
-        #video-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
-        
-        #youtube-background {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100vw;
-            height: 56.25vw;
-            min-height: 100vh;
-            min-width: 177.77vh;
-            transform: translate(-50%, -50%);
-        }
-        
-        .video-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-        }
-        
-        .content {
-            position: relative;
-            z-index: 1;
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-        
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem 2rem;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 100;
-            background: transparent;
-        }
-        
-        .logo {
-            font-size: 2rem;
-            font-weight: 900;
-            font-style: italic;
-            color: #00f3ff;
-            text-shadow: 0 0 10px rgba(0, 243, 255, 0.7);
-            letter-spacing: 2px;
-        }
-        
-        .hamburger {
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: #00f3ff;
-            text-shadow: 0 0 8px rgba(0, 243, 255, 0.7);
-            transition: transform 0.3s ease;
-            z-index: 101;
-        }
-        
-        .hamburger:hover {
-            transform: scale(1.1);
-            text-shadow: 0 0 12px rgba(0, 243, 255, 1);
-        }
-        
-        .menu {
-            position: fixed;
-            top: 0;
-            right: -300px;
-            width: 300px;
-            height: 100vh;
-            background: rgba(20, 20, 30, 0.95);
-            backdrop-filter: blur(10px);
-            transition: right 0.3s ease;
-            z-index: 1000;
-            padding: 4rem 2rem;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
-        }
-        
-        .menu.active {
-            right: 0;
-        }
-        
-        .menu ul {
-            list-style: none;
-        }
-        
-        .menu li {
-            margin: 1.5rem 0;
-        }
-        
-        .menu a {
-            color: #00f3ff;
-            text-decoration: none;
-            font-size: 1.5rem;
-            display: block;
-            padding: 0.5rem 0;
-            transition: all 0.3s ease;
-            text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
-        }
-        
-        .menu a:hover {
-            color: white;
-            text-shadow: 0 0 10px rgba(0, 243, 255, 1);
-        }
-        
-        .close-menu {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #00f3ff;
-            text-shadow: 0 0 8px rgba(0, 243, 255, 0.7);
-        }
-        
-        .hero {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 2rem;
-            width: 100%;
-        }
-        
-        .manifesto {
-            background: rgba(40, 40, 50, 0.85);
-            padding: 3rem;
-            border-radius: 8px;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
-            max-width: 800px;
-            width: 100%;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(100, 100, 150, 0.3);
-        }
-        
-        .manifesto h2 {
-            color: white;
-            margin-bottom: 2rem;
-            text-align: center;
-            font-size: 2.5rem;
-            font-weight: bold;
-        }
-        
-        .manifesto p {
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-            text-align: justify;
-        }
-        
-        @media (max-width: 768px) {
-            .manifesto {
-                padding: 2rem;
-            }
-            
-            .menu {
-                width: 250px;
-            }
-            
-            header {
-                padding: 1.2rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .manifesto {
-                padding: 1.5rem;
-            }
-            
-            header {
-                padding: 1rem;
-            }
-            
-            .logo {
-                font-size: 1.7rem;
-            }
-            
-            .manifesto h2 {
-                font-size: 2rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Toxos - GSAPP Organization</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+
+    body {
+      color: white;
+      background: #000; /* helps if the video can’t autoplay */
+      overflow-x: hidden;
+      min-height: 100vh;
+      scroll-behavior: smooth;
+    }
+
+    /* --- Background video stack --- */
+    #video-container {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0; /* was -1; some mobiles won’t paint it behind the page */
+      overflow: hidden;
+    }
+
+    #youtube-background {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100vw;          /* 16:9 cover trick */
+      height: 56.25vw;       /* 9/16 = 0.5625 */
+      min-height: 100vh;
+      min-width: 177.78vh;   /* 16/9 * 100 */
+      transform: translate(-50%, -50%);
+      pointer-events: none;  /* don’t capture taps */
+    }
+
+    .video-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* --- Foreground content --- */
+    .content {
+      position: relative;
+      z-index: 2;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 3; /* on top of overlay */
+      background: transparent;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 900;
+      font-style: italic;
+      color: #00f3ff;
+      text-shadow: 0 0 10px rgba(0, 243, 255, 0.7);
+      letter-spacing: 2px;
+    }
+
+    .hamburger {
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #00f3ff;
+      text-shadow: 0 0 8px rgba(0, 243, 255, 0.7);
+      transition: transform 0.3s ease;
+      z-index: 4;
+    }
+    .hamburger:hover { transform: scale(1.1); text-shadow: 0 0 12px rgba(0, 243, 255, 1); }
+
+    .menu {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 300px;
+      height: 100vh;
+      background: rgba(20, 20, 30, 0.95);
+      backdrop-filter: blur(10px);
+      transition: right 0.3s ease;
+      z-index: 5;
+      padding: 4rem 2rem;
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+    }
+    .menu.active { right: 0; }
+
+    .menu ul { list-style: none; }
+    .menu li { margin: 1.5rem 0; }
+    .menu a {
+      color: #00f3ff;
+      text-decoration: none;
+      font-size: 1.5rem;
+      display: block;
+      padding: 0.5rem 0;
+      transition: all 0.3s ease;
+      text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+    }
+    .menu a:hover { color: white; text-shadow: 0 0 10px rgba(0, 243, 255, 1); }
+
+    .close-menu {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #00f3ff;
+      text-shadow: 0 0 8px rgba(0, 243, 255, 0.7);
+    }
+
+    .hero {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      width: 100%;
+    }
+
+    .manifesto {
+      background: rgba(40, 40, 50, 0.85);
+      padding: 3rem;
+      border-radius: 8px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+      max-width: 800px;
+      width: 100%;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(100, 100, 150, 0.3);
+    }
+
+    .manifesto h2 {
+      color: white;
+      margin-bottom: 2rem;
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+
+    .manifesto p {
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+      text-align: justify;
+    }
+
+    @media (max-width: 768px) {
+      .manifesto { padding: 2rem; }
+      .menu { width: 250px; }
+      header { padding: 1.2rem; }
+    }
+
+    @media (max-width: 480px) {
+      .manifesto { padding: 1.5rem; }
+      header { padding: 1rem; }
+      .logo { font-size: 1.7rem; }
+      .manifesto h2 { font-size: 2rem; }
+    }
+  </style>
 </head>
 <body>
-    <!-- YouTube Video Background -->
-    <div id="video-container">
-        <div class="video-overlay"></div>
-        <div id="youtube-background"></div>
-    </div>
-    
-    <!-- Header with Hamburger Menu -->
-    <header>
-        <div class="logo">TOXOS</div>
-        <div class="hamburger" id="hamburger">
-            <i class="fas fa-bars"></i>
-        </div>
-    </header>
-    
-    <!-- Navigation Menu -->
-    <div class="menu" id="menu">
-        <div class="close-menu" id="close-menu">
-            <i class="fas fa-times"></i>
-        </div>
-        <ul>
-            <li><a href="#profile">Profile</a></li>
-            <li><a href="#manifesto">Manifesto</a></li>
-            <li><a href="#about">Om ons</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </div>
-    
-    <!-- Main Content -->
-    <div class="content">
-        <!-- Hero Section with Manifesto -->
-        <section class="hero">
-            <div class="manifesto">
-                <h2>Our Manifesto</h2>
-                <p>TOXOS is a collective of architects, designers, and thinkers at Columbia University's GSAPP who are exploring the boundaries of ecological design and sustainable urban futures. We believe that architecture must respond to the changing climate and serve as a catalyst for environmental healing.</p>
-                
-                <p>We reject the notion of architecture as a static object. Instead, we envision buildings and cities as dynamic systems that interact with their environments, adapt to changing conditions, and contribute positively to their ecosystems.</p>
-                
-                <p>Our approach is transdisciplinary, combining design innovation with scientific research, community engagement, and policy development. We work across scales, from material details to regional systems, always with an eye toward creating a more resilient and equitable world.</p>
-                
-                <p>We are committed to the principles of circular economy, designing for disassembly, and creating structures that give more to the environment than they take. Our designs incorporate renewable energy systems, water capture and reuse, and materials that sequester carbon.</p>
-                
-                <p>TOXOS serves as a platform for experimentation, collaboration, and education. We host workshops, lectures, and exhibitions to engage the broader community in reimagining our built environment. Together, we are designing a future where architecture and nature coexist in harmony.</p>
-            </div>
-        </section>
-    </div>
+  <!-- Background Video -->
+  <div id="video-container">
+    <div class="video-overlay"></div>
+    <div id="youtube-background"></div>
+  </div>
 
-    <!-- YouTube API -->
-    <script>
-        // Load YouTube IFrame API
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-        
-        // Create YouTube player
-        var player;
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('youtube-background', {
-                height: '100%',
-                width: '100%',
-                videoId: 'KYrs7bpXUI4',
-                playerVars: {
-                    'autoplay': 1,
-                    'controls': 0,
-                    'showinfo': 0,
-                    'rel': 0,
-                    'loop': 1,
-                    'playlist': 'KYrs7bpXUI4',
-                    'mute': 1,
-                    'enablejsapi': 1,
-                    'modestbranding': 1,
-                    'playsinline': 1
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
-                }
-            });
+  <!-- Header with Hamburger Menu -->
+  <header>
+    <div class="logo">TOXOS</div>
+    <div class="hamburger" id="hamburger">
+      <i class="fas fa-bars"></i>
+    </div>
+  </header>
+
+  <!-- Navigation Menu -->
+  <div class="menu" id="menu">
+    <div class="close-menu" id="close-menu">
+      <i class="fas fa-times"></i>
+    </div>
+    <ul>
+      <li><a href="#profile">Profile</a></li>
+      <li><a href="#manifesto">Manifesto</a></li>
+      <li><a href="#about">Om ons</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <main class="content">
+    <section class="hero" id="manifesto">
+      <div class="manifesto">
+        <h2>Our Manifesto</h2>
+        <p>TOXOS is a collective of architects, designers, and thinkers at Columbia University's GSAPP who are exploring the boundaries of ecological design and sustainable urban futures. We believe that architecture must respond to the changing climate and serve as a catalyst for environmental healing.</p>
+        <p>We reject the notion of architecture as a static object. Instead, we envision buildings and cities as dynamic systems that interact with their environments, adapt to changing conditions, and contribute positively to their ecosystems.</p>
+        <p>Our approach is transdisciplinary, combining design innovation with scientific research, community engagement, and policy development. We work across scales, from material details to regional systems, always with an eye toward creating a more resilient and equitable world.</p>
+        <p>We are committed to the principles of circular economy, designing for disassembly, and creating structures that give more to the environment than they take. Our designs incorporate renewable energy systems, water capture and reuse, and materials that sequester carbon.</p>
+        <p>TOXOS serves as a platform for experimentation, collaboration, and education. We host workshops, lectures, and exhibitions to engage the broader community in reimagining our built environment. Together, we are designing a future where architecture and nature coexist in harmony.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- YouTube IFrame API -->
+  <script>
+    // Load YouTube IFrame API
+    (function loadYT() {
+      var tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    })();
+
+    var player;
+
+    // Called by YouTube API when ready
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('youtube-background', {
+        height: '100%',
+        width: '100%',
+        videoId: 'KYrs7bpXUI4',
+        playerVars: {
+          autoplay: 1,
+          controls: 0,
+          rel: 0,
+          loop: 1,
+          playlist: 'KYrs7bpXUI4', // required for loop
+          modestbranding: 1,
+          playsinline: 1,
+          origin: window.location.origin
+        },
+        events: {
+          'onReady': onPlayerReady,
+          'onStateChange': onPlayerStateChange
         }
-        
-        function onPlayerReady(event) {
-            event.target.playVideo();
-            event.target.setVolume(0);
+      });
+    }
+
+    function onPlayerReady(event) {
+      try { event.target.mute(); } catch (e) {}
+      event.target.playVideo();
+
+      // Ensure the injected iframe allows autoplay on some mobile browsers
+      try {
+        var iframe = player.getIframe(); // synchronous
+        if (iframe && iframe.setAttribute) {
+          var currentAllow = iframe.getAttribute('allow') || '';
+          var needed = 'autoplay; encrypted-media; picture-in-picture';
+          if (!currentAllow.includes('autoplay')) {
+            iframe.setAttribute('allow', (currentAllow ? currentAllow + '; ' : '') + needed);
+          }
         }
-        
-        function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.ENDED) {
-                player.playVideo();
-            }
-        }
-        
-        // Toggle menu
-        const hamburger = document.getElementById('hamburger');
-        const closeMenu = document.getElementById('close-menu');
-        const menu = document.getElementById('menu');
-        
-        hamburger.addEventListener('click', () => {
-            menu.classList.add('active');
-        });
-        
-        closeMenu.addEventListener('click', () => {
-            menu.classList.remove('active');
-        });
-        
-        // Close menu when clicking on a link
-        const menuLinks = document.querySelectorAll('.menu a');
-        menuLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                menu.classList.remove('active');
-            });
-        });
-    </script>
+      } catch (e) {}
+    }
+
+    function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.ENDED) {
+        player.playVideo();
+      }
+    }
+
+    // Toggle menu
+    const hamburger = document.getElementById('hamburger');
+    const closeMenu = document.getElementById('close-menu');
+    const menu = document.getElementById('menu');
+
+    hamburger.addEventListener('click', () => menu.classList.add('active'));
+    closeMenu.addEventListener('click', () => menu.classList.remove('active'));
+    document.querySelectorAll('.menu a').forEach(link =>
+      link.addEventListener('click', () => menu.classList.remove('active'))
+    );
+  </script>
 </body>
 </html>
