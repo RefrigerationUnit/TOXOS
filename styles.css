@@ -242,6 +242,53 @@
     if (!reduce.matches) requestAnimationFrame(draw);
   }
 
+    /* Manifesto stays transparent (you likely already have this) */
+.manifesto{
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  padding: 0;
+  max-width: 800px;
+  width: 100%;
+}
+
+/* Make the summary (heading) look/behave like your H2 */
+.manifesto summary {
+  list-style: none;
+  cursor: pointer;
+  outline: none;
+}
+.manifesto summary::-webkit-details-marker { display: none; } /* hide default arrow */
+
+.manifesto h2{
+  margin: 0 0 1rem;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-shadow: 0 2px 14px rgba(0,0,0,.45);
+  text-wrap: balance;
+}
+
+/* Smoothly collapse/expand the content */
+.manifesto .manifesto-content{
+  display: grid;
+  grid-template-rows: 0fr;       /* collapsed */
+  transition: grid-template-rows 300ms ease, opacity 300ms ease;
+  opacity: 0;
+}
+.manifesto[open] .manifesto-content{
+  grid-template-rows: 1fr;       /* expanded */
+  opacity: 1;
+}
+.manifesto .manifesto-inner{ overflow: hidden; }
+
+.manifesto p{
+  line-height: 1.8;
+  margin-bottom: 1.2rem;
+  font-size: 1.1rem;
+  text-shadow: 0 1px 10px rgba(0,0,0,.35);
+}
+
   // ---- Lifecycle & events -------------------------------------------------
   document.addEventListener('visibilitychange', () => {
     running = !document.hidden;
