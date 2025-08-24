@@ -1,23 +1,11 @@
 :root{ --cyan: 0,243,255; }
 
-* {
+*{
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family: 'Courier New', Courier, monospace;
+  font-family:'Courier New', Courier, monospace;
 }
-
-/* Keep TOXOS logo in its original style */
-.logo {
-  font-family: Arial, sans-serif;  /* or whatever it was before */
-  font-size:2rem;
-  font-weight:900;
-  font-style:italic;
-  color:rgb(var(--cyan));
-  text-shadow:0 0 10px rgba(var(--cyan), .7);
-  letter-spacing:2px;
-}
-
 
 body{
   min-height:100vh;
@@ -57,6 +45,7 @@ header{
   background:transparent;
 }
 .logo{
+  font-family: Arial, sans-serif; /* keep TOXOS non-Courier */
   font-size:2rem;
   font-weight:900;
   font-style:italic;
@@ -82,7 +71,7 @@ header{
   top:0; right:-300px;
   width:300px; height:100vh;
 
-  /* translucent glass + gentle gray gradient toward the right edge */
+  /* translucent gradient look */
   background: linear-gradient(
     to right,
     rgba(20,20,30,0.55) 0%,
@@ -98,7 +87,6 @@ header{
   box-shadow:-5px 0 25px rgba(0,0,0,.45);
   border-left: 1px solid rgba(255,255,255,0.08);
 }
-
 .menu.active{ right:0; }
 .menu ul{ list-style:none; }
 .menu li{ margin:1.5rem 0; }
@@ -166,7 +154,8 @@ header{
   cursor: pointer;
   outline: none;
 }
-.manifesto summary::-webkit-details-marker{ display:none; } /* hide default triangle */
+.manifesto summary::-webkit-details-marker{ display:none; }
+.manifesto summary::marker{ content: ''; } /* hide default marker in FF/Chromium */
 
 .manifesto h2{
   margin: 0;
@@ -186,15 +175,15 @@ header{
 }
 .manifesto[open] .arrow-icon{ transform: rotate(180deg); }
 
-/* Smooth show/hide body */
+/* Smooth height open/close */
 .manifesto .manifesto-content{
   display: grid;
-  grid-template-rows: 0fr;       /* collapsed */
+  grid-template-rows: 0fr;
   transition: grid-template-rows 300ms ease, opacity 300ms ease;
   opacity: 0;
 }
 .manifesto[open] .manifesto-content{
-  grid-template-rows: 1fr;       /* expanded */
+  grid-template-rows: 1fr;
   opacity: 1;
 }
 .manifesto .manifesto-inner{ overflow: hidden; }
@@ -225,6 +214,48 @@ header{
   .logo{ font-size:1.7rem; }
   .manifesto h2{ font-size:2rem; }
 }
+
+/* --- Manifesto reveal: soft fade + top-to-bottom cascade --- */
+.manifesto .manifesto-content { position: relative; }
+.manifesto .manifesto-inner { overflow: hidden; }
+
+/* Initial (collapsed) state for each block inside the manifesto */
+.manifesto .manifesto-inner > *{
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 420ms ease,
+    transform 420ms ease;
+  will-change: opacity, transform;
+}
+
+/* When <details> is open, fade/slide in */
+.manifesto[open] .manifesto-inner > *{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger the children so it feels like a reveal from top to bottom */
+.manifesto[open] .manifesto-inner > *:nth-child(1){ transition-delay: 40ms; }
+.manifesto[open] .manifesto-inner > *:nth-child(2){ transition-delay: 90ms; }
+.manifesto[open] .manifesto-inner > *:nth-child(3){ transition-delay: 140ms; }
+.manifesto[open] .manifesto-inner > *:nth-child(4){ transition-delay: 190ms; }
+.manifesto[open] .manifesto-inner > *:nth-child(5){ transition-delay: 240ms; }
+
+/* Collapse: remove delays */
+.manifesto:not([open]) .manifesto-inner > *{
+  transition-delay: 0ms;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .manifesto .manifesto-inner > *{
+    transition: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+
 
 
 
