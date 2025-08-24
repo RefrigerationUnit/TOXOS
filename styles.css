@@ -1,0 +1,44 @@
+:root{ --cyan: 0,243,255; }
+*{ margin:0; padding:0; box-sizing:border-box; font-family:Arial, sans-serif; }
+body{ min-height:100vh; background:#000; color:#fff; overflow-x:hidden; scroll-behavior:smooth; }
+
+/* Background layers */
+#bg-net{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+#bg-vignette{
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.35) 80%, rgba(0,0,0,.65) 100%);
+}
+
+/* Foreground (same look you had) */
+header{
+  position:fixed; top:0; left:0; right:0; z-index:10;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.5rem 2rem; background:transparent;
+}
+.logo{ font-size:2rem; font-weight:900; font-style:italic; color:rgb(var(--cyan)); text-shadow:0 0 10px rgba(var(--cyan), .7); letter-spacing:2px; }
+.hamburger{ font-size:1.8rem; cursor:pointer; color:rgb(var(--cyan)); text-shadow:0 0 8px rgba(var(--cyan), .7); transition:transform .3s; z-index:11; }
+.hamburger:hover{ transform:scale(1.1); text-shadow:0 0 12px rgba(var(--cyan), 1); }
+
+.menu{
+  position:fixed; top:0; right:-300px; width:300px; height:100vh;
+  background:rgba(20,20,30,.95); backdrop-filter:blur(10px);
+  transition:right .3s ease; z-index:12; padding:4rem 2rem; box-shadow:-5px 0 15px rgba(0,0,0,.5);
+}
+.menu.active{ right:0; }
+.menu ul{ list-style:none; } .menu li{ margin:1.5rem 0; }
+.menu a{ color:rgb(var(--cyan)); text-decoration:none; font-size:1.5rem; display:block; padding:.5rem 0; text-shadow:0 0 5px rgba(var(--cyan), .5); transition:all .3s; }
+.menu a:hover{ color:#fff; text-shadow:0 0 10px rgba(var(--cyan), 1); }
+.close-menu{ position:absolute; top:1rem; right:1rem; font-size:1.5rem; cursor:pointer; color:rgb(var(--cyan)); text-shadow:0 0 8px rgba(var(--cyan), .7); }
+
+.content{ position:relative; z-index:9; padding:2rem; max-width:1200px; margin:0 auto; min-height:100vh; display:flex; align-items:center; justify-content:center; }
+.hero{ width:100%; display:flex; flex-direction:column; align-items:center; text-align:center; padding:2rem; }
+.manifesto{
+  background:rgba(40,40,50,.85); padding:3rem; border-radius:8px;
+  box-shadow:0 5px 25px rgba(0,0,0,.3); max-width:800px; width:100%;
+  backdrop-filter:blur(5px); border:1px solid rgba(100,100,150,.3);
+}
+.manifesto h2{ margin-bottom:2rem; font-size:2.5rem; font-weight:bold; }
+.manifesto p{ line-height:1.8; margin-bottom:1.5rem; font-size:1.1rem; text-align:justify; }
+
+@media (max-width:768px){ .manifesto{ padding:2rem; } .menu{ width:250px; } header{ padding:1.2rem; } }
+@media (max-width:480px){ .manifesto{ padding:1.5rem; } header{ padding:1rem; } .logo{ font-size:1.7rem; } .manifesto h2{ font-size:2rem; } }
