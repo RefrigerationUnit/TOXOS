@@ -69,13 +69,24 @@ header{
   position:fixed;
   top:0; right:-300px;
   width:300px; height:100vh;
-  background:rgba(20,20,30,.95);
-  backdrop-filter:blur(10px);
+
+  /* translucent glass + gentle gray gradient toward the right edge */
+  background: linear-gradient(
+    to right,
+    rgba(20,20,30,0.55) 0%,
+    rgba(40,40,50,0.45) 40%,
+    rgba(210,210,220,0.18) 100%
+  );
+  backdrop-filter: blur(12px) saturate(110%);
+  -webkit-backdrop-filter: blur(12px) saturate(110%);
+
   transition:right .3s ease;
   z-index:12;
   padding:4rem 2rem;
-  box-shadow:-5px 0 15px rgba(0,0,0,.5);
+  box-shadow:-5px 0 25px rgba(0,0,0,.45);
+  border-left: 1px solid rgba(255,255,255,0.08);
 }
+
 .menu.active{ right:0; }
 .menu ul{ list-style:none; }
 .menu li{ margin:1.5rem 0; }
