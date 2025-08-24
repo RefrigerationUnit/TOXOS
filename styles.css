@@ -1,11 +1,23 @@
 :root{ --cyan: 0,243,255; }
 
-*{
+* {
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:Arial, sans-serif;
+  font-family: 'Courier New', Courier, monospace;
 }
+
+/* Keep TOXOS logo in its original style */
+.logo {
+  font-family: Arial, sans-serif;  /* or whatever it was before */
+  font-size:2rem;
+  font-weight:900;
+  font-style:italic;
+  color:rgb(var(--cyan));
+  text-shadow:0 0 10px rgba(var(--cyan), .7);
+  letter-spacing:2px;
+}
+
 
 body{
   min-height:100vh;
