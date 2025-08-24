@@ -1,20 +1,24 @@
 (function networkBackground(opts){
   // ---- Config --------------------------------------------------------------
   const cfg = Object.assign({
-    color:      'rgba(0,243,255,1)',   // line + dot core color
-    glowColor:  'rgba(0,243,255,0.85)',// soft dot glow
-    bgColor:    'transparent',         // canvas clear (kept transparent)
-    maxConnDist: 150,                  // px distance to draw lines
-    speed:      [10, 26],              // px/sec
-    radius:     [1.0, 2.0],            // dot radius
-    life:       [7, 15],               // seconds
-    density:    0.00007                // nodes per pixel (auto scales)
+    color:       'rgba(0,243,255,1)',    // line + dot core color
+    glowColor:   'rgba(0,243,255,0.85)', // soft dot glow
+    bgColor:     'transparent',
+    maxConnDist: 150,                    // px distance to draw lines
+    speed:       [10, 24],               // px/sec
+    radius:      [1.0, 2.0],             // dot radius (px)
+    life:        [12, 28],               // seconds (longer lives)
+    density:     0.00007,                // nodes per pixel
+
+    // NEW: fade timings (as fractions of life)
+    fadeIn:      0.18,                   // 18% of life to fade in
+    fadeOut:     0.22                    // 22% of life to fade out
   }, opts || {});
 
   // Spawn mix: sides + center + anywhere
   const SPAWN = {
     edgeBias:   0.45,  // 45% from left/right edges (aimed inward)
-    centerBias: 0.20,  // 20% seeded near center box
+    centerBias: 0.20,  // 20% seeded near the center box
     margin:     40,    // offscreen margin for edge spawns
     centerBox:  0.40   // width/height fraction of centered spawn box
   };
@@ -26,7 +30,6 @@
   let dpr = Math.min(window.devicePixelRatio || 1, 2);
   let w = 0, h = 0, nodes = [], running = true, lastT = 0;
 
-  // Performance-awareness
   const saveData = navigator.connection && navigator.connection.saveData;
   const isMobile = /Mobi|Android/i.test(navigator.userAgent);
   const reduce   = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -37,12 +40,13 @@
     (reduce.matches ? 0.7 : 1);
 
   // Utils
-  const rand   = (a,b) => a + Math.random() * (b - a);
-  const clamp  = (v,a,b) => Math.max(a, Math.min(b, v));
+  const rand  = (a,b) => a + Math.random() * (b - a);
+  const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+  const ease  = t => t*t*(3 - 2*t); // smoothstep easing 0..1
 
   function resize(){
     dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const W = window.innerWidth, H = window.innerHeight;
+    const W = innerWidth, H = innerHeight;
 
     canvas.width  = Math.max(1, Math.floor(W * dpr));
     canvas.height = Math.max(1, Math.floor(H * dpr));
@@ -64,22 +68,31 @@
     reset(firstGen){
       const sp = rand(cfg.speed[0], cfg.speed[1]);
       let ang;
+      let baseLife = rand(cfg.life[0], cfg.life[1]);
 
       if (firstGen){
-        // Initial seed: anywhere
+        // Initial seed: anywhere (random phase so the page isn't empty)
         this.x = rand(0, w);
         this.y = rand(0, h);
         ang = rand(0, Math.PI * 2);
       } else {
         const r = Math.random();
+
         if (r < SPAWN.edgeBias){
-          // Edge spawn (left or right), aimed inward
+          // Edge spawn (left/right), aimed inward
           const fromLeft = Math.random() < 0.5;
           this.x = fromLeft ? -SPAWN.margin : w + SPAWN.margin;
           this.y = rand(0, h);
-          ang = fromLeft
-            ? rand(-Math.PI/3,  Math.PI/3)      // around → (0 rad)
-            : rand( 2*Math.PI/3, 4*Math.PI/3);  // around ← (π rad)
+          ang = fromLeft ? rand(-Math.PI/3,  Math.PI/3)
+                         : rand( 2*Math.PI/3, 4*Math.PI/3);
+
+          // Guarantee enough lifetime to reach center band
+          const centerW = w * SPAWN.centerBox;
+          const distX   = (w - centerW) * 0.5 + SPAWN.margin;
+          const minTimeToCenter = distX / Math.max(1e-6, sp * 0.5); // worst-case cos≈0.5
+          const buffer = 3;
+          baseLife = Math.max(baseLife, minTimeToCenter + buffer);
+
         } else if (r < SPAWN.edgeBias + SPAWN.centerBias){
           // Center box spawn
           const cx = w * 0.5, cy = h * 0.5;
@@ -97,9 +110,18 @@
 
       this.vx = Math.cos(ang) * sp;
       this.vy = Math.sin(ang) * sp;
-      this.r     = rand(cfg.radius[0], cfg.radius[1]);
-      this.life  = rand(cfg.life[0],   cfg.life[1]);
-      this.t     = rand(0, this.life); // desync fade phases
+
+      this.r    = rand(cfg.radius[0], cfg.radius[1]);
+      this.life = baseLife;
+
+      // NEW: respawns start near the beginning of life → subtle fade-in
+      // tiny jitter avoids all new nodes being exactly the same brightness
+      if (firstGen){
+        this.t = rand(0, this.life); // seed variety on first paint
+      } else {
+        const jitter = rand(0, cfg.fadeIn * this.life * 0.3); // 0..30% of fade-in
+        this.t = jitter;
+      }
     }
 
     update(dt){
@@ -116,9 +138,16 @@
       if (this.y > h + m) this.y = -m;
     }
 
+    // NEW: fade with independent in/out windows (no bright pop on spawn)
     alpha(){
-      // Smooth fade in/out over life
-      return Math.sin(Math.PI * (this.t / this.life)); // 0→1→0
+      const p  = this.t / this.life;       // 0..1
+      const fi = Math.max(0.001, cfg.fadeIn);
+      const fo = Math.max(0.001, cfg.fadeOut);
+
+      let aIn = 1, aOut = 1;
+      if (p < fi)          aIn  = ease(p / fi);           // ramp 0→1
+      if (p > 1 - fo)      aOut = ease((1 - p) / fo);     // ramp 1→0
+      return Math.min(aIn, aOut);                         // plateau in between
     }
 
     drawDot(ctx){
@@ -166,13 +195,10 @@
     const dt  = Math.min(0.033, lastT ? now - lastT : 0.016);
     lastT = now;
 
-    // Update
     for (let i = 0; i < nodes.length; i++) nodes[i].update(dt);
 
-    // Clear (keep transparent so body bg shows)
     ctx.clearRect(0, 0, w, h);
 
-    // Lines
     const maxD = cfg.maxConnDist, maxD2 = maxD * maxD;
     const cells = [], { cols, rows } = buildGrid(cells, maxD);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
@@ -185,7 +211,6 @@
         const bucket = cells[idx(cx, cy)];
         if (!bucket || !bucket.length) continue;
 
-        // Check this cell + a few neighbors to avoid duplicates
         const neigh = [[cx,cy],[cx+1,cy],[cx,cy+1],[cx+1,cy+1],[cx-1,cy+1]];
         for (const [nx, ny] of neigh){
           if (nx < 0 || ny < 0 || nx >= cols || ny >= rows) continue;
@@ -207,10 +232,10 @@
 
               const d = Math.sqrt(d2);
               const closeness = 1 - d / maxD;
-              const alpha = Math.pow(closeness, 1.5) * (0.75 * (aA + aB) * 0.5);
+              const alphaLine = Math.pow(closeness, 1.5) * (0.75 * (aA + aB) * 0.5);
 
               ctx.strokeStyle = cfg.color;
-              ctx.globalAlpha = alpha;
+              ctx.globalAlpha = alphaLine;
               ctx.lineWidth = 1 + 1.2 * closeness;
               ctx.beginPath();
               ctx.moveTo(A.x, A.y);
@@ -223,7 +248,6 @@
     }
     ctx.globalAlpha = 1;
 
-    // Dots
     for (let i = 0; i < nodes.length; i++) nodes[i].drawDot(ctx);
 
     if (!reduce.matches) requestAnimationFrame(draw);
@@ -245,7 +269,7 @@
     }
   });
 
-  window.addEventListener('resize', resize, { passive: true });
+  addEventListener('resize', resize, { passive: true });
 
   // Init
   resize();
@@ -255,4 +279,5 @@
     requestAnimationFrame(draw);
   }
 })();
+
 
