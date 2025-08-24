@@ -181,17 +181,99 @@
       text-align: justify;
     }
 
+    /* Tablet styles */
     @media (max-width: 768px) {
-      .manifesto { padding: 2rem; }
-      .menu { width: 250px; }
-      header { padding: 1.2rem; }
+      .manifesto { 
+        padding: 2rem; 
+      }
+      
+      .manifesto h2 {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+      }
+      
+      .manifesto p {
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+      
+      .menu { 
+        width: 250px; 
+      }
+      
+      .menu a {
+        font-size: 1.3rem;
+      }
+      
+      header { 
+        padding: 1.2rem; 
+      }
+      
+      .logo {
+        font-size: 1.8rem;
+      }
     }
 
+    /* Mobile styles */
     @media (max-width: 480px) {
-      .manifesto { padding: 1.5rem; }
-      header { padding: 1rem; }
-      .logo { font-size: 1.7rem; }
-      .manifesto h2 { font-size: 2rem; }
+      .content {
+        padding: 1rem;
+      }
+      
+      .manifesto { 
+        padding: 1.5rem; 
+      }
+      
+      .manifesto h2 {
+        font-size: 1.7rem;
+        margin-bottom: 1.2rem;
+      }
+      
+      .manifesto p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1.2rem;
+      }
+      
+      header { 
+        padding: 1rem; 
+      }
+      
+      .logo { 
+        font-size: 1.5rem; 
+      }
+      
+      .hamburger {
+        font-size: 1.5rem;
+      }
+      
+      .menu {
+        width: 220px;
+        padding: 3rem 1.5rem;
+      }
+      
+      .menu a {
+        font-size: 1.1rem;
+      }
+      
+      .close-menu {
+        font-size: 1.3rem;
+      }
+    }
+
+    /* Extra small devices */
+    @media (max-width: 360px) {
+      .manifesto h2 {
+        font-size: 1.5rem;
+      }
+      
+      .manifesto p {
+        font-size: 0.85rem;
+      }
+      
+      .logo {
+        font-size: 1.3rem;
+      }
     }
   </style>
 </head>
