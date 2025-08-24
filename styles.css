@@ -159,3 +159,14 @@ header{
   .manifesto h2{ font-size:2rem; }
 }
 
+/* Force manifesto to be transparent at all sizes */
+.manifesto{
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+
