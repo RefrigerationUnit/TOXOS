@@ -4,8 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TOXOS – Blog</title>
+
+  <!-- Font Awesome (for menu icons) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="styles.css?v=5" />
+
+  <!-- CSS (one level up from /pages/) -->
+  <link rel="stylesheet" href="../styles.css?v=4" />
 </head>
 <body>
   <!-- Procedural network background -->
@@ -23,25 +27,31 @@
     <ul>
       <li><a href="blog.html">Blog</a></li>
       <li><a href="works.html">Work</a></li>
-      <li><a href="omoss.html">Om Oss</a></li>
+      <li><a href="omoss.html">Om oss</a></li>
       <li><a href="contact.html">Contact</a></li>
+      <li><a href="../index.html">Home</a></li>
     </ul>
   </nav>
 
   <!-- Page Content -->
   <main class="content">
     <section class="hero" id="blog">
-      <div class="manifesto">
-        <h2>Blog</h2>
-        <p>This is where your blog posts or updates will appear. Right now it's just a placeholder, but you can replace this with your actual blog content later.</p>
-      </div>
+      <h2>Blog</h2>
+      <p>Welcome to the TOXOS blog. Here we’ll post updates, reflections, and articles about architecture, ecology, and technology.</p>
+
+      <!-- Example blog entry -->
+      <article class="post">
+        <h3>First Entry</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+        Phasellus vel lacus ut nunc fermentum posuere.</p>
+      </article>
     </section>
   </main>
 
-  <!-- Scripts -->
-  <script src="network.js?v=4"></script>
+  <!-- Network background + menu script -->
+  <script src="../network.js?v=3"></script>
   <script>
-    // Menu toggle logic
+    // Menu toggle
     const hamburger = document.getElementById('hamburger');
     const closeMenu = document.getElementById('close-menu');
     const menu = document.getElementById('menu');
@@ -53,3 +63,4 @@
   </script>
 </body>
 </html>
+
