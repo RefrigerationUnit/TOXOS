@@ -52,7 +52,10 @@ header{
   color:rgb(var(--cyan));
   text-shadow:0 0 10px rgba(var(--cyan), .7);
   letter-spacing:2px;
+  text-decoration:none;
 }
+.logo:visited { color: rgb(var(--cyan)); }
+
 .hamburger{
   font-size:1.8rem;
   cursor:pointer;
@@ -70,8 +73,6 @@ header{
   position:fixed;
   top:0; right:-300px;
   width:300px; height:100vh;
-
-  /* translucent gradient look */
   background: linear-gradient(
     to right,
     rgba(20,20,30,0.55) 0%,
@@ -80,7 +81,6 @@ header{
   );
   backdrop-filter: blur(12px) saturate(110%);
   -webkit-backdrop-filter: blur(12px) saturate(110%);
-
   transition:right .3s ease;
   z-index:12;
   padding:4rem 2rem;
@@ -134,7 +134,7 @@ header{
   padding:6rem 2rem 3rem; /* extra top space under fixed header */
 }
 
-/* Manifesto: transparent & collapsible */
+/* Manifesto: collapsible + typewriter */
 .manifesto{
   background: transparent;
   border: 0;
@@ -144,8 +144,6 @@ header{
   max-width: 800px;
   width: 100%;
 }
-
-/* Summary (click area): title then arrow below it */
 .manifesto-summary{
   display: grid;
   justify-items: center;
@@ -155,17 +153,15 @@ header{
   outline: none;
 }
 .manifesto summary::-webkit-details-marker{ display:none; }
-.manifesto summary::marker{ content: ''; } /* hide default marker in FF/Chromium */
+.manifesto summary::marker{ content: ''; }
 
 .manifesto h2{
   margin: 0;
   font-size: 2.5rem;
   font-weight: bold;
   text-shadow: 0 2px 14px rgba(0,0,0,.45);
-  text-wrap: balance;
 }
 
-/* Arrow image that flips when open */
 .arrow-icon{
   display:block;
   width: 28px; height: 28px;
@@ -175,42 +171,20 @@ header{
 }
 .manifesto[open] .arrow-icon{ transform: rotate(180deg); }
 
-/* --- Robust height reveal: roll open/closed --- */
+/* Container roll */
 .manifesto .manifesto-content{
-  display: block;
-  overflow: hidden;
-  max-height: 0;
-  opacity: 0;
-  transition:
-    max-height 900ms ease,
-    opacity 700ms ease;
-  will-change: max-height, opacity;
+  display:block;
+  overflow:hidden;
+  max-height:0;
+  opacity:0;
+  transition:max-height 900ms ease, opacity 700ms ease;
 }
 .manifesto[open] .manifesto-content{
-  max-height: 9999px; /* big enough to fit all paragraphs */
-  opacity: 1;
+  max-height:3000px;
+  opacity:1;
 }
 
-/* Top-to-bottom paragraph cascade */
-.manifesto .manifesto-inner{ overflow: hidden; }
-.manifesto .manifesto-inner > *{
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 420ms ease, transform 420ms ease;
-  will-change: opacity, transform;
-}
-.manifesto[open] .manifesto-inner > *{
-  opacity: 1;
-  transform: translateY(0);
-}
-.manifesto[open] .manifesto-inner > *:nth-child(1){ transition-delay: 40ms; }
-.manifesto[open] .manifesto-inner > *:nth-child(2){ transition-delay: 90ms; }
-.manifesto[open] .manifesto-inner > *:nth-child(3){ transition-delay: 140ms; }
-.manifesto[open] .manifesto-inner > *:nth-child(4){ transition-delay: 190ms; }
-.manifesto[open] .manifesto-inner > *:nth-child(5){ transition-delay: 240ms; }
-.manifesto:not([open]) .manifesto-inner > *{ transition-delay: 0ms; }
-
-/* Body text */
+/* Paragraph styling */
 .manifesto p{
   line-height: 1.8;
   margin: 1.2rem 0 0;
@@ -218,14 +192,17 @@ header{
   text-shadow: 0 1px 10px rgba(0,0,0,.35);
 }
 
-/* Focus styles for keyboard users */
-.manifesto-summary:focus-visible h2,
-.manifesto-summary:focus-visible .arrow-icon{
-  outline: 2px solid rgba(0,243,255,.8);
-  outline-offset: 4px;
+/* Typewriter effect base */
+.typewriter{
+  display:inline-block;
+  border-right:2px solid rgba(0,243,255,0.75);
+  animation: blinkCursor 0.7s steps(1) infinite;
+  white-space:pre-wrap;
+}
+@keyframes blinkCursor {
+  50% { border-color: transparent; }
 }
 
-/* Responsive tweaks */
 @media (max-width:768px){
   .menu{ width:250px; }
   header{ padding:1.2rem; }
@@ -236,17 +213,9 @@ header{
   .manifesto h2{ font-size:2rem; }
 }
 
-/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce){
-  .manifesto .manifesto-content{ transition: none; max-height: none; opacity: 1; }
-  .manifesto .manifesto-inner > *{ transition: none; transform: none; opacity: 1; }
+  .manifesto .manifesto-content{ transition:none; max-height:none; opacity:1; }
 }
-.logo { 
-  text-decoration: none;           /* remove underline on the anchor */
-  color: rgb(var(--cyan));         /* keep your cyan color */
-}
-.logo:visited { color: rgb(var(--cyan)); }
-
 
 
 
