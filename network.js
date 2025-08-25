@@ -278,6 +278,36 @@
   } else {
     requestAnimationFrame(draw);
   }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const manifestoDetails = document.getElementById('manifesto-details');
+    const manifestoInner = document.querySelector('.manifesto-inner');
+
+    manifestoDetails.addEventListener('toggle', function() {
+        if (manifestoDetails.open) {
+            typeText(manifestoInner);
+        } else {
+            manifestoInner.innerHTML = ''; // Clear text when closing
+        }
+    });
+
+    function typeText(element) {
+        const text = element.textContent.trim(); // Get the text content
+        element.innerHTML = ''; // Clear current content
+        let i = 0;
+
+        function typeNext() {
+            if (i < text.length) {
+                element.innerHTML += text[i];
+                i++;
+                setTimeout(typeNext, 20); // Adjust typing speed here
+            }
+        }
+
+        typeNext();
+    }
+});
+
 })();
 
 
