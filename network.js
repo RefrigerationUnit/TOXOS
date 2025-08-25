@@ -9,22 +9,21 @@
     radius:      [1.0, 2.0],             // dot radius (px)
     life:        [12, 28],               // seconds (longer lives)
     density:     0.00007,                // nodes per pixel
-
-    // NEW: fade timings (as fractions of life)
-    fadeIn:      0.18,                   // 18% of life to fade in
-    fadeOut:     0.22                    // 22% of life to fade out
+    fadeIn:      0.18,                   // % life to fade in
+    fadeOut:     0.22                    // % life to fade out
   }, opts || {});
 
   // Spawn mix: sides + center + anywhere
   const SPAWN = {
-    edgeBias:   0.45,  // 45% from left/right edges (aimed inward)
-    centerBias: 0.20,  // 20% seeded near the center box
-    margin:     40,    // offscreen margin for edge spawns
-    centerBox:  0.40   // width/height fraction of centered spawn box
+    edgeBias:   0.45,
+    centerBias: 0.20,
+    margin:     40,
+    centerBox:  0.40
   };
 
   // ---- Setup ---------------------------------------------------------------
   const canvas = document.getElementById('bg-net');
+  if (!canvas) return;
   const ctx    = canvas.getContext('2d', { alpha: true });
 
   let dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -42,7 +41,7 @@
   // Utils
   const rand  = (a,b) => a + Math.random() * (b - a);
   const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
-  const ease  = t => t*t*(3 - 2*t); // smoothstep easing 0..1
+  const ease  = t => t*t*(3 - 2*t); // smoothstep 0..1
 
   function resize(){
     dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -71,7 +70,7 @@
       let baseLife = rand(cfg.life[0], cfg.life[1]);
 
       if (firstGen){
-        // Initial seed: anywhere (random phase so the page isn't empty)
+        // Initial seed anywhere (random phase)
         this.x = rand(0, w);
         this.y = rand(0, h);
         ang = rand(0, Math.PI * 2);
@@ -86,12 +85,11 @@
           ang = fromLeft ? rand(-Math.PI/3,  Math.PI/3)
                          : rand( 2*Math.PI/3, 4*Math.PI/3);
 
-          // Guarantee enough lifetime to reach center band
+          // Ensure lifetime long enough to cross center band
           const centerW = w * SPAWN.centerBox;
           const distX   = (w - centerW) * 0.5 + SPAWN.margin;
-          const minTimeToCenter = distX / Math.max(1e-6, sp * 0.5); // worst-case cos≈0.5
-          const buffer = 3;
-          baseLife = Math.max(baseLife, minTimeToCenter + buffer);
+          const minTimeToCenter = distX / Math.max(1e-6, sp * 0.5);
+          baseLife = Math.max(baseLife, minTimeToCenter + 3);
 
         } else if (r < SPAWN.edgeBias + SPAWN.centerBias){
           // Center box spawn
@@ -114,12 +112,11 @@
       this.r    = rand(cfg.radius[0], cfg.radius[1]);
       this.life = baseLife;
 
-      // NEW: respawns start near the beginning of life → subtle fade-in
-      // tiny jitter avoids all new nodes being exactly the same brightness
+      // Subtle fade-in for respawns
       if (firstGen){
-        this.t = rand(0, this.life); // seed variety on first paint
+        this.t = rand(0, this.life); // variety on first paint
       } else {
-        const jitter = rand(0, cfg.fadeIn * this.life * 0.3); // 0..30% of fade-in
+        const jitter = rand(0, cfg.fadeIn * this.life * 0.3);
         this.t = jitter;
       }
     }
@@ -138,16 +135,15 @@
       if (this.y > h + m) this.y = -m;
     }
 
-    // NEW: fade with independent in/out windows (no bright pop on spawn)
     alpha(){
       const p  = this.t / this.life;       // 0..1
       const fi = Math.max(0.001, cfg.fadeIn);
       const fo = Math.max(0.001, cfg.fadeOut);
 
       let aIn = 1, aOut = 1;
-      if (p < fi)          aIn  = ease(p / fi);           // ramp 0→1
-      if (p > 1 - fo)      aOut = ease((1 - p) / fo);     // ramp 1→0
-      return Math.min(aIn, aOut);                         // plateau in between
+      if (p < fi)     aIn  = ease(p / fi);        // ramp 0→1
+      if (p > 1 - fo) aOut = ease((1 - p) / fo);  // ramp 1→0
+      return Math.min(aIn, aOut);                 // plateau between
     }
 
     drawDot(ctx){
@@ -278,36 +274,56 @@
   } else {
     requestAnimationFrame(draw);
   }
+})();  // end network IIFE
 
-    document.addEventListener('DOMContentLoaded', function() {
-    const manifestoDetails = document.getElementById('manifesto-details');
-    const manifestoInner = document.querySelector('.manifesto-inner');
+// --- Manifesto typewriter (paragraph-safe, idempotent) ---------------------
+document.addEventListener('DOMContentLoaded', () => {
+  const details = document.getElementById('manifesto-details');
+  if (!details) return;
 
-    manifestoDetails.addEventListener('toggle', function() {
-        if (manifestoDetails.open) {
-            typeText(manifestoInner);
-        } else {
-            manifestoInner.innerHTML = ''; // Clear text when closing
-        }
-    });
+  const inner = details.querySelector('.manifesto-inner');
+  const paragraphs = Array.from(inner.querySelectorAll('p'));
+  const originals = paragraphs.map(p => p.textContent); // snapshot once
 
-    function typeText(element) {
-        const text = element.textContent.trim(); // Get the text content
-        element.innerHTML = ''; // Clear current content
-        let i = 0;
+  let raf = 0, last = 0, pIndex = 0, cIndex = 0;
+  const CPS = 120; // chars per second
 
-        function typeNext() {
-            if (i < text.length) {
-                element.innerHTML += text[i];
-                i++;
-                setTimeout(typeNext, 20); // Adjust typing speed here
-            }
-        }
+  function cancel(){ if (raf){ cancelAnimationFrame(raf); raf = 0; } }
+  function resetDisplay(){
+    paragraphs.forEach(p => { p.textContent = ''; p.classList.remove('typing'); });
+    pIndex = 0; cIndex = 0; last = 0;
+  }
 
-        typeNext();
+  function step(ts){
+    if (!last) last = ts;
+    let toAdd = Math.max(1, Math.floor((CPS * (ts - last)) / 1000));
+    last = ts;
+
+    while (toAdd-- > 0){
+      if (pIndex >= originals.length){
+        paragraphs[paragraphs.length - 1]?.classList.remove('typing');
+        raf = 0; return;
+      }
+      const text = originals[pIndex];
+      if (cIndex === 0) paragraphs[pIndex].classList.add('typing');
+      paragraphs[pIndex].textContent += text[cIndex++];
+      if (cIndex >= text.length){
+        paragraphs[pIndex].classList.remove('typing');
+        pIndex++; cIndex = 0;
+      }
     }
+    raf = requestAnimationFrame(step);
+  }
+
+  function start(){ cancel(); resetDisplay(); raf = requestAnimationFrame(step); }
+
+  details.addEventListener('toggle', () => {
+    if (details.open) start();
+    else { cancel(); resetDisplay(); }
+  });
+
+  if (details.open) start(); // in case it's open on load
 });
 
-})();
 
 
