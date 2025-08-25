@@ -241,6 +241,11 @@ header{
   .manifesto .manifesto-content{ transition: none; max-height: none; opacity: 1; }
   .manifesto .manifesto-inner > *{ transition: none; transform: none; opacity: 1; }
 }
+.logo { 
+  text-decoration: none;           /* remove underline on the anchor */
+  color: rgb(var(--cyan));         /* keep your cyan color */
+}
+.logo:visited { color: rgb(var(--cyan)); }
 
 
 
