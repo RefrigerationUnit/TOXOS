@@ -182,8 +182,8 @@ header{
   max-height: 0;
   opacity: 0;
   transition:
-    max-height 15000ms ease,
-    opacity 10000ms ease;
+    max-height 900ms ease,
+    opacity 700ms ease;
   will-change: max-height, opacity;
 }
 .manifesto[open] .manifesto-content{
