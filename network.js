@@ -4,17 +4,23 @@
     color:       'rgba(0,243,255,1)',    // line + dot core color
     glowColor:   'rgba(0,243,255,0.85)', // soft dot glow
     bgColor:     'transparent',
-    maxConnDist: 175,                    // px distance to draw lines
+    maxConnDist: 165,                    // px distance to draw lines
     speed:       [10, 24],               // px/sec
     radius:      [1.0, 2.0],             // dot radius (px)
     life:        [12, 28],               // seconds (longer lives)
-    density:     0.00009,               // nodes per pixel
+    density:     0.000085,               // nodes per pixel
     fadeIn:      0.18,                   // % life to fade in
     fadeOut:     0.22,                   // % life to fade out
 
-    // NEW: cursor attraction
-    attractRadius:   140,                // px – how close the cursor needs to be
-    attractStrength: 90                  // px/s^2 – pull strength
+    // Cursor attraction (already added previously)
+    attractRadius:   140,                // px
+    attractStrength: 90,                 // px/s^2
+
+    // NEW: spawn separation + link pop guard
+    minSpawnDist: 32,                    // px minimum distance from existing nodes
+    spawnAttempts: 6,                    // respawn tries to find a free spot
+    spawnAttemptsFirst: 2,               // lighter checks during initial seeding
+    linkAlphaMin: 0.14                   // both nodes must be at least this visible
   }, opts || {});
 
   // Spawn mix: sides + center + anywhere
@@ -42,7 +48,7 @@
     (isMobile ? 0.85 : 1) *
     (reduce.matches ? 0.7 : 1);
 
-  // NEW: track cursor/touch position (canvas has pointer-events:none)
+  // Cursor/touch position
   const cursor = { x: 0, y: 0, active: false };
   addEventListener('pointermove', (e) => {
     cursor.x = e.clientX; cursor.y = e.clientY; cursor.active = true;
@@ -81,50 +87,69 @@
     while (nodes.length > target) nodes.pop();
   }
 
+  // Quick proximity test for spawn rejection
+  const minD2 = cfg.minSpawnDist * cfg.minSpawnDist;
+  function tooClose(x, y){
+    for (let i = 0; i < nodes.length; i++){
+      const n = nodes[i];
+      const dx = n.x - x, dy = n.y - y;
+      if (dx*dx + dy*dy < minD2) return true;
+    }
+    return false;
+  }
+
   // ---- Node ---------------------------------------------------------------
   class Node{
     constructor(){ this.reset(true); }
 
     reset(firstGen){
       const sp = rand(cfg.speed[0], cfg.speed[1]);
-      let ang;
+      let ang = 0;
       let baseLife = rand(cfg.life[0], cfg.life[1]);
 
-      if (firstGen){
-        // Initial seed anywhere (random phase)
-        this.x = rand(0, w);
-        this.y = rand(0, h);
-        ang = rand(0, Math.PI * 2);
-      } else {
+      // Choose a spawn location, but avoid being too close to others
+      let attempts = firstGen ? cfg.spawnAttemptsFirst : cfg.spawnAttempts;
+      let edgeSpawn = false;
+
+      let candX = 0, candY = 0, candAng = 0;
+      for (let a = 0; a < Math.max(1, attempts); a++){
         const r = Math.random();
+        edgeSpawn = false;
 
-        if (r < SPAWN.edgeBias){
+        if (!firstGen && r < SPAWN.edgeBias){
           // Edge spawn (left/right), aimed inward
+          edgeSpawn = true;
           const fromLeft = Math.random() < 0.5;
-          this.x = fromLeft ? -SPAWN.margin : w + SPAWN.margin;
-          this.y = rand(0, h);
-          ang = fromLeft ? rand(-Math.PI/3,  Math.PI/3)
-                         : rand( 2*Math.PI/3, 4*Math.PI/3);
-
-          // Ensure lifetime long enough to cross center band
-          const centerW = w * SPAWN.centerBox;
-          const distX   = (w - centerW) * 0.5 + SPAWN.margin;
-          const minTimeToCenter = distX / Math.max(1e-6, sp * 0.5);
-          baseLife = Math.max(baseLife, minTimeToCenter + 3);
-
-        } else if (r < SPAWN.edgeBias + SPAWN.centerBias){
+          candX = fromLeft ? -SPAWN.margin : w + SPAWN.margin;
+          candY = rand(0, h);
+          candAng = fromLeft ? rand(-Math.PI/3,  Math.PI/3)
+                             : rand( 2*Math.PI/3, 4*Math.PI/3);
+        } else if (!firstGen && r < SPAWN.edgeBias + SPAWN.centerBias){
           // Center box spawn
           const cx = w * 0.5, cy = h * 0.5;
           const bw = w * SPAWN.centerBox, bh = h * SPAWN.centerBox;
-          this.x = rand(cx - bw/2, cx + bw/2);
-          this.y = rand(cy - bh/2, cy + bh/2);
-          ang = rand(0, Math.PI * 2);
+          candX = rand(cx - bw/2, cx + bw/2);
+          candY = rand(cy - bh/2, cy + bh/2);
+          candAng = rand(0, Math.PI * 2);
         } else {
-          // Anywhere
-          this.x = rand(0, w);
-          this.y = rand(0, h);
-          ang = rand(0, Math.PI * 2);
+          // Anywhere (used also for firstGen)
+          candX = rand(0, w);
+          candY = rand(0, h);
+          candAng = rand(0, Math.PI * 2);
         }
+
+        if (!tooClose(candX, candY)) break; // accept this candidate
+        if (a === attempts - 1) break;      // give up and use last candidate
+      }
+
+      this.x = candX; this.y = candY; ang = candAng;
+
+      if (edgeSpawn){
+        // Ensure lifetime long enough to cross center band
+        const centerW = w * SPAWN.centerBox;
+        const distX   = (w - centerW) * 0.5 + SPAWN.margin;
+        const minTimeToCenter = distX / Math.max(1e-6, sp * 0.5);
+        baseLife = Math.max(baseLife, minTimeToCenter + 3);
       }
 
       this.vx = Math.cos(ang) * sp;
@@ -146,7 +171,7 @@
       this.t += dt;
       if (this.t >= this.life){ this.reset(false); return; }
 
-      // --- Cursor attraction (disabled if reduced motion) ---
+      // Cursor attraction (disabled if reduced motion)
       if (cursor.active && !reduce.matches){
         const dx = cursor.x - this.x;
         const dy = cursor.y - this.y;
@@ -154,7 +179,7 @@
         const R  = cfg.attractRadius;
         if (r2 > 0 && r2 < R*R){
           const d = Math.sqrt(r2);
-          const falloff = 1 - (d / R); // 1 near cursor → 0 at edge
+          const falloff = 1 - (d / R);
           const ax = (dx / d) * cfg.attractStrength * falloff;
           const ay = (dy / d) * cfg.attractStrength * falloff;
 
@@ -261,12 +286,12 @@
 
           for (let i = 0; i < bucket.length; i++){
             const A = nodes[bucket[i]], aA = A.alpha();
-            if (aA <= 0) continue;
+            if (aA < cfg.linkAlphaMin) continue; // NEW: guard early
 
             const j0 = (nx === cx && ny === cy) ? i + 1 : 0;
             for (let j = j0; j < nb.length; j++){
               const B = nodes[nb[j]], aB = B.alpha();
-              if (aB <= 0) continue;
+              if (aB < cfg.linkAlphaMin) continue; // NEW: both must be visible enough
 
               const dx = A.x - B.x, dy = A.y - B.y;
               const d2 = dx*dx + dy*dy;
