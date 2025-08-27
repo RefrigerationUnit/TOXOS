@@ -4,11 +4,11 @@
     color:       'rgba(0,243,255,1)',    // line + dot core color
     glowColor:   'rgba(0,243,255,0.85)', // soft dot glow
     bgColor:     'transparent',
-    maxConnDist: 165,                    // px distance to draw lines
+    maxConnDist: 175,                    // px distance to draw lines
     speed:       [10, 24],               // px/sec
     radius:      [1.0, 2.0],             // dot radius (px)
     life:        [12, 28],               // seconds (longer lives)
-    density:     0.000085,               // nodes per pixel
+    density:     0.00009,               // nodes per pixel
     fadeIn:      0.18,                   // % life to fade in
     fadeOut:     0.22,                   // % life to fade out
 
