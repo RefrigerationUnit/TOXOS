@@ -8,9 +8,13 @@
     speed:       [10, 24],               // px/sec
     radius:      [1.0, 2.0],             // dot radius (px)
     life:        [12, 28],               // seconds (longer lives)
-    density:     0.000085,                // nodes per pixel
+    density:     0.000085,               // nodes per pixel
     fadeIn:      0.18,                   // % life to fade in
-    fadeOut:     0.22                    // % life to fade out
+    fadeOut:     0.22,                   // % life to fade out
+
+    // NEW: cursor attraction
+    attractRadius:   140,                // px – how close the cursor needs to be
+    attractStrength: 90                  // px/s^2 – pull strength
   }, opts || {});
 
   // Spawn mix: sides + center + anywhere
@@ -37,6 +41,23 @@
     (saveData ? 0.6 : 1) *
     (isMobile ? 0.85 : 1) *
     (reduce.matches ? 0.7 : 1);
+
+  // NEW: track cursor/touch position (canvas has pointer-events:none)
+  const cursor = { x: 0, y: 0, active: false };
+  addEventListener('pointermove', (e) => {
+    cursor.x = e.clientX; cursor.y = e.clientY; cursor.active = true;
+  }, { passive: true });
+  addEventListener('pointerleave', () => { cursor.active = false; }, { passive: true });
+  addEventListener('touchstart', (e) => {
+    const t = e.touches[0]; if (!t) return;
+    cursor.x = t.clientX; cursor.y = t.clientY; cursor.active = true;
+  }, { passive: true });
+  addEventListener('touchmove', (e) => {
+    const t = e.touches[0]; if (!t) return;
+    cursor.x = t.clientX; cursor.y = t.clientY;
+  }, { passive: true });
+  addEventListener('touchend',   () => { cursor.active = false; }, { passive: true });
+  addEventListener('touchcancel',() => { cursor.active = false; }, { passive: true });
 
   // Utils
   const rand  = (a,b) => a + Math.random() * (b - a);
@@ -124,6 +145,31 @@
     update(dt){
       this.t += dt;
       if (this.t >= this.life){ this.reset(false); return; }
+
+      // --- Cursor attraction (disabled if reduced motion) ---
+      if (cursor.active && !reduce.matches){
+        const dx = cursor.x - this.x;
+        const dy = cursor.y - this.y;
+        const r2 = dx*dx + dy*dy;
+        const R  = cfg.attractRadius;
+        if (r2 > 0 && r2 < R*R){
+          const d = Math.sqrt(r2);
+          const falloff = 1 - (d / R); // 1 near cursor → 0 at edge
+          const ax = (dx / d) * cfg.attractStrength * falloff;
+          const ay = (dy / d) * cfg.attractStrength * falloff;
+
+          // Accelerate toward cursor
+          this.vx += ax * dt;
+          this.vy += ay * dt;
+
+          // Clamp max speed so it stays calm
+          const v = Math.hypot(this.vx, this.vy);
+          const vmax = Math.max(cfg.speed[1] * 1.8, 40);
+          if (v > vmax){ const s = vmax / v; this.vx *= s; this.vy *= s; }
+        }
+      }
+
+      // Integrate position
       this.x += this.vx * dt;
       this.y += this.vy * dt;
 
@@ -324,7 +370,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (details.open) start(); // in case it's open on load
 });
-
 
 
 
