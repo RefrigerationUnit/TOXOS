@@ -229,7 +229,18 @@ header{
   .manifesto .manifesto-content{ transition:none; max-height:none; opacity:1; }
 }
 
+/* Smaller body text for the home-page manifesto only */
+#manifesto-details .manifesto-inner p{
+  font-size: 0.95rem;   /* was 1.1rem */
+  line-height: 1.7;
+}
 
+/* Optional: tweak smaller on phones */
+@media (max-width: 480px){
+  #manifesto-details .manifesto-inner p{
+    font-size: 0.9rem;
+  }
+}
 
 
 
