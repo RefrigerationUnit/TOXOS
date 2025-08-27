@@ -45,7 +45,7 @@ header{
   background:transparent;
 }
 .logo{
-  font-family: Arial, sans-serif; /* keep TOXOS non-Courier */
+  font-family: Arial, sans-serif; /* keep TOXOS non–Space Grotesk */
   font-size:2rem;
   font-weight:900;
   font-style:italic;
@@ -101,7 +101,7 @@ header{
 }
 .menu a:hover{
   color:#fff;
-  text-shadow:0 0 10px rgba(var(--cyan), 1);
+  text-shadow:0 0 10px rgba(0,243,255,1);
 }
 .close-menu{
   position:absolute;
@@ -130,8 +130,8 @@ header{
   display:flex;
   flex-direction:column;
   align-items:center;
-  text-align:center;
-  padding:6rem 2rem 3rem; /* extra top space under fixed header */
+  text-align:center;            /* keep heading centered */
+  padding:6rem 2rem 3rem;       /* extra top space under fixed header */
 }
 
 /* Manifesto: collapsible + typewriter */
@@ -158,10 +158,11 @@ header{
 .manifesto h2{
   margin: 0;
   font-size: 2.5rem;
-  font-weight: bold;
+  font-weight: 700; /* use the loaded weight explicitly */
   text-shadow: 0 2px 14px rgba(0,0,0,.45);
 }
 
+/* Arrow image that flips when open */
 .arrow-icon{
   display:block;
   width: 28px; height: 28px;
@@ -171,17 +172,24 @@ header{
 }
 .manifesto[open] .arrow-icon{ transform: rotate(180deg); }
 
-/* Container roll */
+/* Container roll (keeps the area from popping open) */
 .manifesto .manifesto-content{
   display:block;
   overflow:hidden;
   max-height:0;
   opacity:0;
-  transition:max-height 900ms ease, opacity 700ms ease;
+  transition:max-height 700ms ease, opacity 500ms ease;
 }
 .manifesto[open] .manifesto-content{
   max-height:3000px;
   opacity:1;
+}
+
+/* Left-align the typed text while keeping the block centered */
+.manifesto .manifesto-inner{
+  text-align:left;          /* stops lines from “sliding in” from center */
+  max-width: 78ch;
+  margin-inline:auto;
 }
 
 /* Paragraph styling */
@@ -192,17 +200,20 @@ header{
   text-shadow: 0 1px 10px rgba(0,0,0,.35);
 }
 
-/* Typewriter effect base */
-.typewriter{
+/* Caret on the paragraph currently being typed (matches JS .typing class) */
+.manifesto p.typing::after{
+  content:'';
   display:inline-block;
-  border-right:2px solid rgba(0,243,255,0.75);
-  animation: blinkCursor 0.7s steps(1) infinite;
-  white-space:pre-wrap;
+  width:2px;
+  height:0.9em;
+  background: rgba(0,243,255,.9);
+  margin-left:2px;
+  vertical-align:-0.12em;
+  animation: blinkCaret .8s steps(1,end) infinite;
 }
-@keyframes blinkCursor {
-  50% { border-color: transparent; }
-}
+@keyframes blinkCaret { 50% { opacity:0; } }
 
+/* Responsive tweaks */
 @media (max-width:768px){
   .menu{ width:250px; }
   header{ padding:1.2rem; }
@@ -213,11 +224,11 @@ header{
   .manifesto h2{ font-size:2rem; }
 }
 
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce){
   .manifesto .manifesto-content{ transition:none; max-height:none; opacity:1; }
 }
 
-.manifesto h2 { font-weight: 700; }
 
 
 
