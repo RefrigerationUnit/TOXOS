@@ -395,6 +395,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (details.open) start(); // in case it's open on load
 });
-
-
-
