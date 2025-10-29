@@ -1,0 +1,10 @@
+/* Contacts page layout (inherits ../styles.css) */
+.cards{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+.member img{ display:block; width:100%; height:auto; aspect-ratio: 1 / 1; object-fit: cover }
+.member-body{ padding: 12px 14px 16px }
+.member-body h2{ margin:2px 0 6px; font-size: 18px }
+.member p{ color: var(--muted) }

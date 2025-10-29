@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TOXOS — Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="main.js"></script>
+</head>
+<body>
+  <!-- ASCII-esque animated background -->
+  <canvas id="ascii-bg" aria-hidden="true"></canvas>
+
+  <!-- Top navigation -->
+  <header class="site-header" role="banner">
+    <nav class="topnav" aria-label="Primary">
+      <a class="nav-link left" href="contacts/">Contact</a>
+      <a class="nav-link center" href="blog/">Blog</a>
+      <a class="nav-link right" href="/" id="home-link" aria-current="page">Home</a>
+    </nav>
+  </header>
+
+  <main id="main" class="site-main" role="main">
+    <!-- Hero: looping birds video -->
+    <section class="hero" aria-label="Intro video">
+      <div class="video-frame">
+        <video class="hero-video" autoplay muted loop playsinline poster="media/video-poster.jpg">
+          <source src="media/birds.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <button class="scroll-cue" aria-label="Scroll to manifesto" data-target="#manifesto" title="Scroll">
+        <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </section>
+
+    <!-- Manifesto -->
+    <section id="manifesto" class="section container">
+      <h1>Our Manifesto</h1>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse potenti. In eget suscipit arcu.
+        Curabitur maximus, mauris sit amet dictum facilisis, sapien tortor rutrum nibh, vitae convallis dui lacus nec risus.
+        Vivamus tempus, felis non interdum sagittis, lectus neque porta nibh, nec sagittis est turpis ut velit.
+      </p>
+      <p>
+        Integer congue, mi pulvinar semper efficitur, erat nisl pellentesque nibh, sed laoreet neque nunc at arcu.
+        Maecenas non leo ac orci consequat aliquam. Nulla quis lorem ut libero malesuada feugiat. In hac habitasse platea dictumst.
+      </p>
+      <p>
+        Morbi et interdum risus. Proin non purus in ipsum laoreet dictum. Phasellus at bibendum arcu, vitae pharetra dui.
+        Integer luctus, neque id lobortis semper, dui nunc tempus enim, nec tincidunt arcu neque ac nibh.
+      </p>
+
+      <div class="cta-row">
+        <a class="btn primary" href="blog/">Take me to the blog!</a>
+        <button class="btn ghost" type="button" id="donate-btn" aria-disabled="true">Donate</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <small>© All content present within this site is to be associated with the founders and not with any other institution, including Columbia University.</small>
+  </footer>
+</body>
+</html>

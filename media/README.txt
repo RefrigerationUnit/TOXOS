@@ -1,0 +1,1 @@
+Place your looping birds video here named 'birds.mp4'. Optionally add a 'video-poster.jpg' still image.
