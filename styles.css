@@ -54,6 +54,8 @@ body{
   text-shadow: 0 0 6px rgba(176,240,255,.55), 0 0 14px rgba(176,240,255,.28);
 }
 .topnav .nav-link:active{ transform: scale(.96) }
+/* Ensure the centered Home link keeps its horizontal centering when scaling */
+.topnav .center:active{ transform: translateX(-50%) scale(.96) }
 .topnav .center{
   position:absolute;
   left:50%;
