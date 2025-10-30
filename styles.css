@@ -64,11 +64,13 @@ body{
 /* ---------- Hero ---------- */
 .site-main{display:block; padding-top: 80px; padding-bottom: 80px}
 .hero{
-  /* Center video and fill the first viewport excluding fixed header/footer */
+  /* Center video and stack arrow below it */
   min-height: calc(100vh - 160px);
   display:flex;
+  flex-direction: column; /* stack video then arrow */
   align-items:center;
   justify-content:center;
+  gap: 16px;
   padding: 20px;
 }
 .video-frame{
@@ -90,7 +92,7 @@ body{
   filter: saturate(0.95) contrast(1.05);
 }
 .scroll-cue{
-  margin-top: 24px;
+  margin-top: 0; /* spacing handled by hero gap */
   background: transparent;
   border: 1px solid var(--border);
   color: var(--muted);
