@@ -1,6 +1,6 @@
 /* ---------- Base ---------- */
 :root{
-  --bg: #0b0b0d;
+  --bg: #020203;
   --bg-2: #101114;
   --fg: #e6e6e6;
   --muted: #a9adb7;
@@ -15,7 +15,8 @@ body{
   margin:0;
   font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
   color:var(--fg);
-  background: var(--bg);
+  /* Simple image background across all pages */
+  background: var(--bg) url('media/background.png') center / cover fixed no-repeat;
   line-height:1.6;
   overflow-x:hidden;
   display:grid;
@@ -24,12 +25,7 @@ body{
 }
 
 /* Canvas as animated background */
-#ascii-bg{
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  background: radial-gradient(1200px 600px at 50% 40%, rgba(255,255,255,0.06), transparent 60%) , var(--bg);
-}
+#ascii-bg{ display:none }
 
 /* ---------- Header / Nav ---------- */
 .site-header{position:relative; z-index:2; padding-top: 14px;}
@@ -47,9 +43,14 @@ body{
   text-decoration:none;
   font-weight:600;
   letter-spacing:.3px;
-  transition: color .2s ease, opacity .2s ease;
+  transition: color .18s ease, opacity .18s ease, text-shadow .22s ease, transform .08s ease;
 }
-.topnav .nav-link:hover{color:var(--fg)}
+.topnav .nav-link:hover,
+.topnav .nav-link:focus-visible{
+  color:var(--fg);
+  text-shadow: 0 0 6px rgba(176,240,255,.55), 0 0 14px rgba(176,240,255,.28);
+}
+.topnav .nav-link:active{ transform: scale(.96) }
 .topnav .center{
   position:absolute;
   left:50%;
@@ -69,7 +70,8 @@ body{
   border:1px solid var(--border);
   border-radius: 8px;
   overflow:hidden;
-  max-width: min(68vw, 820px);
+  /* Smaller than before to match request */
+  max-width: min(56vw, 640px);
   width:100%;
   background: #111;
 }
