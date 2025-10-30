@@ -178,3 +178,14 @@ p + p{margin-top:.8em}
   .scroll-cue{ animation: none }
   .btn{ transition: none }
 }
+
+/* Make the hero video larger on small screens */
+@media (max-width: 600px){
+  .video-frame{
+    max-width: calc(100vw - 32px);  /* nearly full width with 16px margins */
+  }
+  .hero{
+    padding: 16px;                  /* a bit tighter padding on mobile */
+    gap: 14px;
+  }
+}
