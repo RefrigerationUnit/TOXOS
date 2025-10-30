@@ -104,4 +104,19 @@
       }
     });
   }
+  // Manifesto fade-in on scroll
+  const manifesto = document.getElementById('manifesto');
+  if(manifesto){
+    if('IntersectionObserver' in window){
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(entry => {
+          if(entry.isIntersecting){ manifesto.classList.add('reveal'); }
+        });
+      }, { threshold: 0.15 });
+      io.observe(manifesto);
+    } else {
+      // Fallback: reveal immediately
+      manifesto.classList.add('reveal');
+    }
+  }
 })();
