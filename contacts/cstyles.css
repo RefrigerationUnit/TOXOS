@@ -8,3 +8,69 @@
 .member-body{ padding: 12px 14px 16px }
 .member-body h2{ margin:2px 0 6px; font-size: 18px }
 .member p{ color: var(--muted) }
+
+/* Center the page content (title + founders) within the viewport. 
+   160px offsets the fixed header+footer from your global CSS. Adjust if needed. */
+.content-wrap{
+  display: grid;
+  justify-items: center;         /* center children horizontally */
+  align-content: center;         /* center group vertically */
+  min-height: calc(100svh - 160px);
+  margin: 0 auto;                /* keep centered horizontally */
+}
+
+/* Keep the founders row compact and centered */
+.founders{
+  display: grid;
+  grid-template-columns: repeat(5, max-content);  /* columns hug content */
+  gap: 22px;
+  justify-content: center;        /* center the row */
+  align-items: start;
+}
+
+/* Ensure each founder block has a consistent width for neat centering */
+.founder{
+  width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.founder .avatar{
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;       /* round image */
+  object-fit: cover;        /* fill circle nicely */
+  display: block;
+}
+
+.founder .info{ margin-top: 10px }
+.founder .name{ margin: 4px 0 2px; font-size: 16px; font-weight: 700 }
+.founder .email{ color: var(--muted); text-decoration: none; font-size: 14px }
+.founder .email:hover{ text-decoration: underline }
+
+/* Smaller page title on this page */
+.page-title{
+  font-size: clamp(20px, 2.4vw, 28px);
+  margin: 6vh auto 2vh;
+}
+
+/* Mobile: stack one per row, avatar left and info to the right */
+@media (max-width: 720px){
+  .founders{
+    grid-template-columns: 1fr;
+    gap: 16px;
+    justify-items: stretch;     /* let each row fill width */
+  }
+  .founder{
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    gap: 12px;
+  }
+  .founder .avatar{
+    width: 72px; height: 72px; flex: 0 0 72px;
+  }
+}
